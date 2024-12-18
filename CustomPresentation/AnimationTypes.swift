@@ -7,25 +7,41 @@
 
 import UIKit
 
-enum AnimationTypes
+enum PresentAnimationTypes
 {
     case rollFromLeft
     case rollFromBottom
 }
 
+enum DismissAnimationTypes
+{
+    case toLeft
+    case toRight
+}
 
-internal extension AnimationTypes {
-    func startState(finalFrame: CGRect) -> CGAffineTransform {
+internal extension PresentAnimationTypes {
+    func startState(finalFrame: CGRect) -> AnimationTransform {
         switch self {
         case .rollFromLeft:
-            return CGAffineTransform(rotationAngle: CGFloat.pi).translatedBy(x: 0, y: finalFrame.height)
+            return AnimationTransform(offset: CGPoint(x: -finalFrame.width, y: 0), rotation: CGFloat.pi)
         case .rollFromBottom:
-            return CGAffineTransform(rotationAngle: 0).translatedBy(x: 0, y: finalFrame.height)
+            return AnimationTransform(offset: CGPoint(x: 0, y: finalFrame.height), rotation: CGFloat.pi)
         }
     }
 }
 
-internal struct TransformForAnimation {
-    var position: CGPoint
+internal extension DismissAnimationTypes {
+    func finalState(finalFrame: CGRect) -> AnimationTransform {
+        switch self {
+        case .toLeft:
+            return AnimationTransform(offset: CGPoint(x: -finalFrame.width, y: 0), rotation: 0)
+        case .toRight:
+            return AnimationTransform(offset: CGPoint(x: finalFrame.width, y: 0), rotation: 0)
+        }
+    }
+}
+
+internal struct AnimationTransform {
+    var offset: CGPoint
     var rotation: CGFloat
 }

@@ -8,14 +8,22 @@
 import UIKit
 
 class DismissAnimation: NSObject {
-    let duration: TimeInterval = 0.3
+    let duration: TimeInterval = 1
+    let animationType: DismissAnimationTypes = .toRight
+    
+    
 
     private func animator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
         let from = transitionContext.view(forKey: .from)!
         let initialFrame = transitionContext.initialFrame(for: transitionContext.viewController(forKey: .from)!)
-
+        
         let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
-            from.frame = initialFrame.offsetBy(dx: 0, dy: initialFrame.height)
+            
+            let endTransform = self.animationType.finalState(finalFrame: initialFrame)
+
+            
+            from.frame = initialFrame.offsetBy(dx: endTransform.offset.x, dy: endTransform.offset.y)
+
         }
 
         animator.addCompletion { (position) in

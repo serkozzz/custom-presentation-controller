@@ -10,25 +10,24 @@ import UIKit
 
 class PresentAnimation: NSObject {
     let duration: TimeInterval = 1
-    let animationType: AnimationTypes = .rollFromBottom
+    let animationType: PresentAnimationTypes = .rollFromLeft
     
-        private func animator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
-
-            let to = transitionContext.view(forKey: .to)!
-            let finalFrame = transitionContext.finalFrame(for: transitionContext.viewController(forKey: .to)!)
-            to.transform  = animationType.startState(finalFrame: finalFrame)
-            
-            //to.frame = finalFrame.offsetBy(dx: -finalFrame.width, dy: 0)
-            //to.transform = .identity.translatedBy(x: -finalFrame.width, y: <#T##CGFloat#>).rotated(by: CGFloat.pi)
-            let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
-                //to.frame = finalFrame
-                to.transform = .identity
-            }
-            animator.addCompletion { (position) in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-            }
-            return animator
+    private func animator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
+        
+        let to = transitionContext.view(forKey: .to)!
+        let finalFrame = transitionContext.finalFrame(for: transitionContext.viewController(forKey: .to)!)
+        let startTransform = animationType.startState(finalFrame: finalFrame)
+        to.transform = .identity.rotated(by: startTransform.rotation)
+        to.frame = finalFrame.offsetBy(dx: startTransform.offset.x, dy: startTransform.offset.y)
+        let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
+            to.frame = finalFrame
+            to.transform = .identity
         }
+        animator.addCompletion { (position) in
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }
+        return animator
+    }
 }
 
 
