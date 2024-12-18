@@ -16,8 +16,10 @@ class PresentAnimation: NSObject {
             let to = transitionContext.view(forKey: .to)!
             let finalFrame = transitionContext.finalFrame(for: transitionContext.viewController(forKey: .to)!)
             to.frame = finalFrame.offsetBy(dx: 0, dy: finalFrame.height)
+            to.transform = .identity.rotated(by: CGFloat.pi)
             let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
                 to.frame = finalFrame
+                to.transform = .identity
             }
             animator.addCompletion { (position) in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
@@ -34,20 +36,6 @@ extension PresentAnimation: UIViewControllerAnimatedTransitioning {
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-//        let to = transitionContext.view(forKey: .to)!
-//        let finalFrame = transitionContext.finalFrame(for: transitionContext.viewController(forKey: .to)!)
-//        
-//        to.frame = finalFrame.offsetBy(dx: 0, dy: finalFrame.height)
-//        
-//        UIView.animate(withDuration: duration, delay: 0,
-//                       usingSpringWithDamping: 1, initialSpringVelocity: 0,
-//                       options: [.curveEaseOut], animations: {
-//            to.frame = finalFrame
-//        }) { (_) in
-//            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-//        }
-        
-        
         let animator = self.animator(using: transitionContext)
         animator.startAnimation()
     }
